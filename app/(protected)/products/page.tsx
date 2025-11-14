@@ -1,8 +1,9 @@
-import React from 'react'
+import { ProductsTable } from "@/components/products/ProductsTable"
 
 const Products = () => {
     return (
-        <div>Products</div>
+        // <div>Products</div>
+        <ProductsTable />
     )
 }
 
