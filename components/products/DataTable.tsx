@@ -28,7 +28,8 @@ import { ProductFormValues } from "@/lib/schema";
 import { Modal } from "@/components/products/Modal"
 import {
     useAddProductMutation,
-    useUpdateProductMutation
+    useUpdateProductMutation,
+    useDeleteProductMutation
 } from '@/store/features/products/productApi'
 import { Product } from "@/types/productType"
 
@@ -45,12 +46,13 @@ export function DataTable<TData, TValue>({
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [openModal, setOpenModal] = useState<boolean>(false);
-    const [modalMode, setModalMode] = useState<"create" | "edit">("create");
+    const [modalMode, setModalMode] = useState<"create" | "edit" | "delete">("create");
     const [addProduct, { isLoading: addProductLoading, error: addProductError }] = useAddProductMutation();
     const [updateProduct, { isLoading: updateProductLoading, error: updateProductError }] = useUpdateProductMutation();
+    const [deleteProduct, { isLoading: deleteProductLoading }] = useDeleteProductMutation();
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
 
-    const handleOpenModal = (mode: "create" | "edit", product?: Product) => {
+    const handleOpenModal = (mode: "create" | "edit" | "delete", product?: Product) => {
         setModalMode(mode)
         if (product) {
             setSelectedProduct(product)
@@ -73,6 +75,9 @@ export function DataTable<TData, TValue>({
             } else if (modalMode === "edit" && selectedProduct) {
                 await updateProduct({ ...values, id: selectedProduct.id }).unwrap()
                 console.log("Would update:", selectedProduct, values)
+            } else if (modalMode === "delete" && selectedProduct) {
+                // await updateProduct({ ...values, id: selectedProduct.id }).unwrap()
+                console.log("Would delete:", selectedProduct, values)
             }
 
             setOpenModal(false)
@@ -80,6 +85,16 @@ export function DataTable<TData, TValue>({
             console.error("Failed to save product", e)
         }
     }
+    const handleDelete = async () => {
+        if (!selectedProduct) return;
+        try {
+            await deleteProduct(selectedProduct.id).unwrap();
+            setSelectedProduct(null);
+            setOpenModal(false);
+        } catch (e) {
+            console.error("Failed to delete product", e);
+        }
+    };
 
     const table = useReactTable({
         data,
@@ -95,7 +110,7 @@ export function DataTable<TData, TValue>({
         },
         meta: {
             onEdit: (row: Product) => handleOpenModal("edit", row as Product),
-            // onDelete: (row: Product) => handleOpenModal("edit", row as Product),
+            onDelete: (row: Product) => handleOpenModal("delete", row as Product),
         },
     })
 
@@ -120,6 +135,7 @@ export function DataTable<TData, TValue>({
                         status: selectedProduct.status,
                     }
                     : undefined}
+                onDelete={handleDelete}
             />
 
             {/* Filter & Add Product Button */}
