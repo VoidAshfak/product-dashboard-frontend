@@ -1,15 +1,10 @@
 export type ProductStatus = "active" | "inactive" | "archived";
 
-export type ProductCategory =
-  | "Streaming Plan"
-  | "Add-on"
-  | "GPU Instance"
-  | "Storage";
 
 export interface Product {
-  // id: string;
+  id: string;
   name: string;
-  category: ProductCategory;
+  category: string;
   price: number;
   stock: number;
   totalSold: number;

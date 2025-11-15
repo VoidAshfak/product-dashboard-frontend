@@ -22,6 +22,7 @@ export const productsApi = createApi({
                         id: doc.id,
                         ...(doc.data() as Omit<Product, "id">),
                     }));
+                    
                     return { data: initialData };
                 } catch (err: any) {
                     return { error: { status: "CUSTOM_ERROR", error: err.message } };
@@ -36,12 +37,11 @@ export const productsApi = createApi({
 
                 const unsubscribe = onSnapshot(q, (snapshot) => {
                     updateCachedData((draft) => {
-                        // console.log("snapshot size", snapshot.size);
-
                         draft.length = 0;
                         snapshot.forEach((doc) => {
                             draft.push({
-                                ...(doc.data() as Product),
+                                id: doc.id,
+                                ...(doc.data() as Omit<Product, 'id'>),
                             });
                         });
                     });
@@ -61,9 +61,9 @@ export const productsApi = createApi({
             }),
         }),
 
-        updateProduct: builder.mutation<Product, Product & { id: string }>({
+        updateProduct: builder.mutation<Product, Product>({
             query: ({ id, ...rest }) => ({
-                url: `/products/${id}`,
+                url: `/products/update/${id}`,
                 method: "PUT",
                 body: rest,
             }),
@@ -71,7 +71,7 @@ export const productsApi = createApi({
 
         deleteProduct: builder.mutation<{ id: string }, string>({
             query: (id) => ({
-                url: `/products/${id}`,
+                url: `/products/delete/${id}`,
                 method: "DELETE",
             }),
         }),

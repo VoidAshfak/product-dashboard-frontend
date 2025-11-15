@@ -23,7 +23,6 @@ interface ProductDialogProps {
     initialData?: ProductFormValues;
     onOpenChange?: (open: boolean) => void;
     onSubmit: (values: ProductFormValues) => Promise<void>;
-    // onSubmit: (values: ProductFormValues) => ProductFormValues;
     loading?: boolean;
 }
 

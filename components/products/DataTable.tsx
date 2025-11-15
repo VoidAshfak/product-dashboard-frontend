@@ -9,6 +9,7 @@ import {
     getSortedRowModel,
     SortingState,
     useReactTable,
+    VisibilityState,
 } from "@tanstack/react-table"
 
 import {
@@ -43,23 +44,6 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const table = useReactTable({
-        data,
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-        onSortingChange: setSorting,
-        getSortedRowModel: getSortedRowModel(),
-        onColumnFiltersChange: setColumnFilters,
-        getFilteredRowModel: getFilteredRowModel(),
-        state: {
-            sorting,
-            columnFilters
-        },
-        meta: {
-            onEdit: (row: Product) => handleOpenModal("edit", row as Product),
-            onDelete: (row: Product) => handleOpenModal("edit", row as Product),
-        },
-    })
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [modalMode, setModalMode] = useState<"create" | "edit">("create");
     const [addProduct, { isLoading: addProductLoading, error: addProductError }] = useAddProductMutation();
@@ -85,8 +69,9 @@ export function DataTable<TData, TValue>({
         try {
             if (modalMode === "create") {
                 await addProduct(values).unwrap()
+                setSelectedProduct(null)
             } else if (modalMode === "edit" && selectedProduct) {
-                await updateProduct(values).unwrap()
+                await updateProduct({ ...values, id: selectedProduct.id }).unwrap()
                 console.log("Would update:", selectedProduct, values)
             }
 
@@ -95,6 +80,24 @@ export function DataTable<TData, TValue>({
             console.error("Failed to save product", e)
         }
     }
+
+    const table = useReactTable({
+        data,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+        onSortingChange: setSorting,
+        getSortedRowModel: getSortedRowModel(),
+        onColumnFiltersChange: setColumnFilters,
+        getFilteredRowModel: getFilteredRowModel(),
+        state: {
+            sorting,
+            columnFilters
+        },
+        meta: {
+            onEdit: (row: Product) => handleOpenModal("edit", row as Product),
+            // onDelete: (row: Product) => handleOpenModal("edit", row as Product),
+        },
+    })
 
 
 
@@ -107,7 +110,6 @@ export function DataTable<TData, TValue>({
                 onSubmit={handleSubmit}
                 initialData={selectedProduct
                     ? {
-                        // map Product → ProductFormValues (no id)
                         name: selectedProduct.name,
                         category: selectedProduct.category,
                         price: selectedProduct.price,

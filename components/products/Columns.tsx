@@ -16,6 +16,21 @@ import {
 
 export const columns: ColumnDef<Product>[] = [
     {
+        accessorKey: "id",
+        header: ({ column }) => {
+            return (
+                <div
+                    className="py-5 cursor-pointer flex items-center"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    <span className="hover:text-gray-600">Product ID</span>
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </div>
+            )
+        },
+        cell: ({ row }) => <div>{row.getValue("id")}</div>,
+    },
+    {
         accessorKey: "name",
         header: ({ column }) => {
             return (
