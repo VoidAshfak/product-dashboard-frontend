@@ -7,7 +7,7 @@ import { ProductFormValues } from "@/lib/schema";
 export const productsApi = createApi({
     reducerPath: "productsApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:8080/api/v1",
+        baseUrl: process.env.NEXT_PUBLIC_BASE_API_URL!,
         credentials: "include",
     }),
     tagTypes: ["Product"],

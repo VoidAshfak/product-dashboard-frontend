@@ -8,7 +8,7 @@ import type {
 export const authApi = createApi({
     reducerPath: "authApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:8080/api/v1",
+        baseUrl: process.env.NEXT_PUBLIC_BASE_API_URL!,
         credentials: "include",
     }),
     tagTypes: ["Auth"],
