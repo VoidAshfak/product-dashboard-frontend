@@ -37,7 +37,7 @@ export function LoginForm() {
             dispatch(login(res));
             router.push('/');
         } catch (error) {
-            
+            throw new Error(error as string);
         }
     };
 

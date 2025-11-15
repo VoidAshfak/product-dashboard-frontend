@@ -76,7 +76,6 @@ export function DataTable<TData, TValue>({
                 await updateProduct({ ...values, id: selectedProduct.id }).unwrap()
                 console.log("Would update:", selectedProduct, values)
             } else if (modalMode === "delete" && selectedProduct) {
-                // await updateProduct({ ...values, id: selectedProduct.id }).unwrap()
                 console.log("Would delete:", selectedProduct, values)
             }
 

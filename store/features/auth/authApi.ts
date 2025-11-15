@@ -1,37 +1,50 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import type { LoginRequest, LoginResponse, MeResponse } from '@/types/userType'
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type {
+    LoginRequest,
+    LoginResponse,
+    MeResponse,
+} from "@/types/userType";
 
 export const authApi = createApi({
-    reducerPath: 'authApi',
+    reducerPath: "authApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: 'http://localhost:8080/api/v1',
-        credentials: 'include',
+        baseUrl: "http://localhost:8080/api/v1",
+        credentials: "include",
     }),
+    tagTypes: ["Auth"],
     endpoints: (builder) => ({
         login: builder.mutation<LoginResponse, LoginRequest>({
             query: (body) => ({
-                url: '/auth/login',
-                method: 'POST',
-                body
+                url: "/auth/login",
+                method: "POST",
+                body,
             }),
+            invalidatesTags: [{ type: "Auth", id: "Me" }],
         }),
+
         getMe: builder.query<MeResponse, void>({
             query: () => ({
-                url: '/auth/me',
-                method: 'GET',
+                url: "/auth/me",
+                method: "GET",
             }),
+            providesTags: (result) =>
+                result
+                    ? [{ type: "Auth" as const, id: "Me" }]
+                    : [{ type: "Auth" as const, id: "Me" }],
         }),
+
         logout: builder.mutation<{ success: boolean; message: string }, void>({
             query: () => ({
-                url: '/auth/logout',
-                method: 'POST',
+                url: "/auth/logout",
+                method: "POST",
             }),
+            invalidatesTags: [{ type: "Auth", id: "Me" }],
         }),
     }),
-})
+});
 
-export const { 
+export const {
     useLoginMutation,
     useGetMeQuery,
-    useLogoutMutation
- } = authApi;
+    useLogoutMutation,
+} = authApi;
