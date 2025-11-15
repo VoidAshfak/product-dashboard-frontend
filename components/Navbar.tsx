@@ -22,6 +22,7 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet";
+import LogoutBtn from "./LogoutBtn";
 
 interface MenuItem {
     title: string;
@@ -40,11 +41,7 @@ interface Navbar1Props {
     };
     menu?: MenuItem[];
     auth?: {
-        login: {
-            title: string;
-            url: string;
-        };
-        signup: {
+        logout: {
             title: string;
             url: string;
         };
@@ -63,11 +60,13 @@ const Navbar1 = ({
             url: "/analytics",
         },
     ],
+    auth = {
+        logout: { title: "Logout", url: "#" },
+    },
 }: Navbar1Props) => {
     return (
         <section className="py-4 border">
             <div className="container">
-                {/* Desktop Menu */}
                 <nav className="hidden items-center justify-between lg:flex">
                     <div className="flex items-center gap-6">
 
@@ -78,6 +77,7 @@ const Navbar1 = ({
                                 </NavigationMenuList>
                             </NavigationMenu>
                         </div>
+                        <LogoutBtn title={auth.logout.title}/>
                     </div>
                 </nav>
 
@@ -105,6 +105,11 @@ const Navbar1 = ({
                                     >
                                         {menu.map((item) => renderMobileMenuItem(item))}
                                     </Accordion>
+                                    <div className="flex flex-col gap-3">
+                                        <Button asChild>
+                                            <a href={auth.logout.url}>{auth.logout.title}</a>
+                                        </Button>
+                                    </div>
 
                                 </div>
                             </SheetContent>
