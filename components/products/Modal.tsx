@@ -21,7 +21,8 @@ interface ProductDialogProps {
     mode: "create" | "edit";
     initialData?: ProductFormValues;
     onOpenChange?: (open: boolean) => void;
-    onSubmit?: (values: ProductFormValues) => Promise<void>;
+    // onSubmit?: (values: ProductFormValues) => Promise<void>;
+    onSubmit: (values: ProductFormValues) => ProductFormValues;
     loading?: boolean;
 }
 
@@ -48,8 +49,8 @@ export function Modal({
         values: initialData,
     });
 
-    const handleSubmit = async (values: ProductFormValues) => {
-        // await onSubmit(values);
+    const handleSubmit =  (values: ProductFormValues) => {
+        onSubmit(values);
         console.log("Form submitted");
         
     };
@@ -254,7 +255,7 @@ export function Modal({
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    // onClick={() => onOpenChange(false)}
+                                    onClick={onOpenChange?.bind(null, false)}
                                 >
                                     Cancel
                                 </Button>

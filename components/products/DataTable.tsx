@@ -23,6 +23,8 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { Plus } from "lucide-react"
+import { ProductFormValues } from "@/lib/schema";
+import { Modal } from "@/components/products/Modal"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -32,7 +34,7 @@ interface DataTableProps<TData, TValue> {
 
 export function DataTable<TData, TValue>({
     columns,
-    data,
+    data
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -49,9 +51,32 @@ export function DataTable<TData, TValue>({
             columnFilters
         },
     })
+    const [openModal, setOpenModal] = useState<boolean>(false);
+    const [modalMode, setModalMode] = useState<"create" | "edit">("create");
+
+    const handleOpenModal = (mode: "create" | "edit") => {
+        setModalMode(mode);
+        setOpenModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setOpenModal(false);
+    };
+
+    const handleSubmit = (values: ProductFormValues) => {
+        console.log(values);
+        handleCloseModal();
+        return values
+    };
 
     return (
         <>
+            <Modal
+                mode={modalMode}
+                open={openModal}
+                onOpenChange={handleCloseModal}
+                onSubmit={handleSubmit}
+            />
 
             {/* Filter & Add Product Button */}
             <div className="flex items-center justify-between">
@@ -67,14 +92,14 @@ export function DataTable<TData, TValue>({
                 </div>
                 <div>
                     <Button
-                        
+                        onClick={() => handleOpenModal("create")}
                     >
                         <Plus />
                         <span className="mr-2">Add Product</span>
                     </Button>
                 </div>
             </div>
-        
+
             {/* Table */}
             <div className="overflow-hidden rounded-md border">
                 <Table>
