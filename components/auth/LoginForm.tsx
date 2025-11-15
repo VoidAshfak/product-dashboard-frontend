@@ -7,17 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { LoginRequest as LoginFormValues } from '@/types/userType'
+import { LoginRequest as LoginRequestValues } from '@/types/userType'
 import { useAppDispatch } from '@/store/redux-hooks'
 import { login } from '@/store/features/auth/authSlice'
 import { useLoginMutation } from "@/store/api";
 import { useRouter } from "next/navigation";
+import {FormSchema} from '@/lib/schema'
 
-
-const FormSchema = z.object({
-    email: z.email({ message: "Please enter a valid email address." }),
-    password: z.string().min(6, { message: "Password must be at least 6 characters." }),
-});
 
 export function LoginForm() {
 

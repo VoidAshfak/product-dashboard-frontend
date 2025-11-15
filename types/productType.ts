@@ -1,4 +1,4 @@
-export type ProductStatus = "active" | "inactive" | "draft" | "archived";
+export type ProductStatus = "active" | "inactive" | "archived";
 
 export type ProductCategory =
   | "Streaming Plan"
@@ -40,7 +40,7 @@ export const sampleProducts: Product[] = [
     currency: "USD",
 
     status: "active",
-    stock: 0, // SaaS, you can treat as unlimited
+    stock: 99, // SaaS, you can treat as unlimited
     minStockThreshold: 0,
 
     totalSold: 320,
@@ -61,7 +61,7 @@ export const sampleProducts: Product[] = [
     currency: "USD",
 
     status: "active",
-    stock: 0,
+    stock: 23,
     minStockThreshold: 0,
 
     totalSold: 210,
@@ -81,7 +81,7 @@ export const sampleProducts: Product[] = [
     price: 0.3, // per hour
     currency: "USD",
 
-    status: "active",
+    status: "archived",
     stock: 40,
     minStockThreshold: 15,
 
@@ -124,7 +124,7 @@ export const sampleProducts: Product[] = [
     currency: "USD",
 
     status: "active",
-    stock: 0,
+    stock: 24,
     minStockThreshold: 0,
 
     totalSold: 430,
@@ -145,7 +145,7 @@ export const sampleProducts: Product[] = [
     currency: "USD",
 
     status: "inactive",
-    stock: 0,
+    stock: 67,
     minStockThreshold: 0,
 
     totalSold: 75,
@@ -186,7 +186,7 @@ export const sampleProducts: Product[] = [
     price: 39,
     currency: "USD",
 
-    status: "draft",
+    status: "archived",
     stock: 0,
     minStockThreshold: 0,
 
