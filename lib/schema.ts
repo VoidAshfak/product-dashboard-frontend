@@ -8,7 +8,7 @@ export const productSchema = z.object({
     totalSold: z.number().min(0),
     totalViews: z.number().min(0),
     ratingAvg: z.number().min(0).max(5),
-    status: z.string().min(1)
+    status: z.enum(["active", "inactive", "archived"],"Status is either active, inactive or archived")
 });
 
 export type ProductFormValues = z.infer<typeof productSchema>;

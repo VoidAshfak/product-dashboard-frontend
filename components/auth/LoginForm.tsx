@@ -29,9 +29,16 @@ export function LoginForm() {
     });
 
     const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-        const res = await loginUser(data).unwrap();
-        dispatch(login(res));
-        router.push('/');
+        try {
+            const res = await loginUser(data).unwrap();
+            if(res.success === false) {
+                throw new Error(res.message);
+            }
+            dispatch(login(res));
+            router.push('/');
+        } catch (error) {
+            
+        }
     };
 
     return (

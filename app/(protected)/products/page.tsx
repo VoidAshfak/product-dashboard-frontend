@@ -1,5 +1,4 @@
 import Products from "@/components/products/Products"
-import { Product, sampleProducts } from "@/types/productType"
 
 
 export default async function Page() {

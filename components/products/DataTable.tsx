@@ -25,6 +25,11 @@ import { useState } from "react"
 import { Plus } from "lucide-react"
 import { ProductFormValues } from "@/lib/schema";
 import { Modal } from "@/components/products/Modal"
+import {
+    useAddProductMutation,
+    useUpdateProductMutation
+} from '@/store/features/products/productApi'
+import { Product } from "@/types/productType"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -50,24 +55,48 @@ export function DataTable<TData, TValue>({
             sorting,
             columnFilters
         },
+        meta: {
+            onEdit: (row: Product) => handleOpenModal("edit", row as Product),
+            onDelete: (row: Product) => handleOpenModal("edit", row as Product),
+        },
     })
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [modalMode, setModalMode] = useState<"create" | "edit">("create");
+    const [addProduct, { isLoading: addProductLoading, error: addProductError }] = useAddProductMutation();
+    const [updateProduct, { isLoading: updateProductLoading, error: updateProductError }] = useUpdateProductMutation();
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
 
-    const handleOpenModal = (mode: "create" | "edit") => {
-        setModalMode(mode);
-        setOpenModal(true);
-    };
+    const handleOpenModal = (mode: "create" | "edit", product?: Product) => {
+        setModalMode(mode)
+        if (product) {
+            setSelectedProduct(product)
+        } else {
+            setSelectedProduct(null)
+        }
+        setOpenModal(true)
+    }
 
     const handleCloseModal = () => {
         setOpenModal(false);
     };
 
-    const handleSubmit = (values: ProductFormValues) => {
-        console.log(values);
-        handleCloseModal();
-        return values
-    };
+
+    const handleSubmit = async (values: ProductFormValues) => {
+        try {
+            if (modalMode === "create") {
+                await addProduct(values).unwrap()
+            } else if (modalMode === "edit" && selectedProduct) {
+                await updateProduct(values).unwrap()
+                console.log("Would update:", selectedProduct, values)
+            }
+
+            setOpenModal(false)
+        } catch (e) {
+            console.error("Failed to save product", e)
+        }
+    }
+
+
 
     return (
         <>
@@ -76,6 +105,19 @@ export function DataTable<TData, TValue>({
                 open={openModal}
                 onOpenChange={handleCloseModal}
                 onSubmit={handleSubmit}
+                initialData={selectedProduct
+                    ? {
+                        // map Product → ProductFormValues (no id)
+                        name: selectedProduct.name,
+                        category: selectedProduct.category,
+                        price: selectedProduct.price,
+                        stock: selectedProduct.stock,
+                        totalSold: selectedProduct.totalSold,
+                        totalViews: selectedProduct.totalViews,
+                        ratingAvg: selectedProduct.ratingAvg,
+                        status: selectedProduct.status,
+                    }
+                    : undefined}
             />
 
             {/* Filter & Add Product Button */}

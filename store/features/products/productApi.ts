@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { Product } from "@/types/productType";
 import { collection, getDocs, onSnapshot, query } from "firebase/firestore";
 import { firestore } from "@/lib/firebase";
+import { ProductFormValues } from "@/lib/schema";
 
 export const productsApi = createApi({
     reducerPath: "productsApi",
@@ -35,13 +36,12 @@ export const productsApi = createApi({
 
                 const unsubscribe = onSnapshot(q, (snapshot) => {
                     updateCachedData((draft) => {
-                        console.log("snapshot size", snapshot.size);
+                        // console.log("snapshot size", snapshot.size);
 
                         draft.length = 0;
                         snapshot.forEach((doc) => {
                             draft.push({
-                                id: doc.id,
-                                ...(doc.data() as Omit<Product, "id">),
+                                ...(doc.data() as Product),
                             });
                         });
                     });
@@ -53,15 +53,15 @@ export const productsApi = createApi({
         }),
 
         // Mutations call your Express API, which writes to Firestore
-        addProduct: builder.mutation<Product, Omit<Product, "id" | "createdAt" | "updatedAt">>({
+        addProduct: builder.mutation<Product, ProductFormValues>({
             query: (body) => ({
-                url: "/products",
+                url: "/products/create",
                 method: "POST",
                 body,
             }),
         }),
 
-        updateProduct: builder.mutation<Product, Partial<Product> & { id: string }>({
+        updateProduct: builder.mutation<Product, Product & { id: string }>({
             query: ({ id, ...rest }) => ({
                 url: `/products/${id}`,
                 method: "PUT",

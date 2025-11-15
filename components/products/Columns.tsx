@@ -13,8 +13,6 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { ProductStatus } from '@/types/productType'
 
 export const columns: ColumnDef<Product>[] = [
     {
@@ -158,8 +156,8 @@ export const columns: ColumnDef<Product>[] = [
         id: "actions",
         header: 'Action',
         enableHiding: false,
-        cell: ({ row }) => {
-            const payment = row.original
+        cell: ({ row, table }) => {
+            const product = row.original
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -170,13 +168,13 @@ export const columns: ColumnDef<Product>[] = [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(payment.id)}
+                            onClick={() => (table.options.meta as any)?.onEdit?.(product)}
                         >
                             <Edit2 />
                             Edit
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(payment.id)}
+                            onClick={() => (table.options.meta as any)?.onDelete?.(product)}
                         >
                             <Trash />
                             Delete
@@ -187,3 +185,5 @@ export const columns: ColumnDef<Product>[] = [
         },
     },
 ]
+
+

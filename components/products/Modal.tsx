@@ -15,14 +15,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Product } from "@/types/productType";
 
 interface ProductDialogProps {
     open: boolean;
     mode: "create" | "edit";
     initialData?: ProductFormValues;
     onOpenChange?: (open: boolean) => void;
-    // onSubmit?: (values: ProductFormValues) => Promise<void>;
-    onSubmit: (values: ProductFormValues) => ProductFormValues;
+    onSubmit: (values: ProductFormValues) => Promise<void>;
+    // onSubmit: (values: ProductFormValues) => ProductFormValues;
     loading?: boolean;
 }
 
@@ -49,8 +50,8 @@ export function Modal({
         values: initialData,
     });
 
-    const handleSubmit =  (values: ProductFormValues) => {
-        onSubmit(values);
+    const handleSubmit = async (values: ProductFormValues) => {
+        await onSubmit(values);
         console.log("Form submitted");
         
     };
@@ -62,8 +63,7 @@ export function Modal({
                     <DialogHeader>
                         <DialogTitle>{mode === "create" ? "Create Product" : "Edit Product"}</DialogTitle>
                         <DialogDescription>
-                            Make changes to your profile here. Click save when you&apos;re
-                            done.
+                            {mode === "create" ? "Create a new product. All fields mark with * are required" : "Make changes to the product here. Click save when you&apos;re done."}
                         </DialogDescription>
                     </DialogHeader>
                     <Form {...form}>
@@ -78,7 +78,7 @@ export function Modal({
                                         name="name"
                                         render={({ field }) => (
                                             <FormItem className="md:col-span-2 lg:col-span-3">
-                                                <FormLabel>Product Name</FormLabel>
+                                                <FormLabel>Product Name*</FormLabel>
                                                 <FormControl>
                                                     <Input placeholder="e.g. 4K Gaming Laptop" {...field} />
                                                 </FormControl>
@@ -94,7 +94,7 @@ export function Modal({
                                         name="category"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Category</FormLabel>
+                                                <FormLabel>Category*</FormLabel>
                                                 <FormControl>
                                                     <Input placeholder="e.g. Electronics" {...field} />
                                                 </FormControl>
