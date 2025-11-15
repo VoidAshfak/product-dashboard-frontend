@@ -13,26 +13,30 @@ export const productsApi = createApi({
     tagTypes: ["Product"],
     endpoints: (builder) => ({
         getProducts: builder.query<Product[], void>({
-            // First load (one-time fetch)
+            // one-time initial fetch
             async queryFn() {
                 try {
                     const q = query(collection(firestore, "dashboard"));
                     const snap = await getDocs(q);
+
                     const initialData: Product[] = snap.docs.map((doc) => ({
                         id: doc.id,
                         ...(doc.data() as Omit<Product, "id">),
                     }));
-                    
+
                     return { data: initialData };
                 } catch (err: any) {
-                    return { error: { status: "CUSTOM_ERROR", error: err.message } };
+                    return {
+                        error: {
+                            status: "CUSTOM_ERROR",
+                            error: err?.message ?? "Failed to load products",
+                        },
+                    };
                 }
             },
-            // Then subscribe for live updates
-            async onCacheEntryAdded(
-                _arg,
-                { updateCachedData, cacheEntryRemoved }
-            ) {
+
+            // subscribe to live updates
+            async onCacheEntryAdded(_arg, { updateCachedData, cacheEntryRemoved }) {
                 const q = query(collection(firestore, "dashboard"));
 
                 const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -41,32 +45,50 @@ export const productsApi = createApi({
                         snapshot.forEach((doc) => {
                             draft.push({
                                 id: doc.id,
-                                ...(doc.data() as Omit<Product, 'id'>),
+                                ...(doc.data() as Omit<Product, "id">),
                             });
                         });
                     });
                 });
 
-                await cacheEntryRemoved;
-                unsubscribe();
+                try {
+                    await cacheEntryRemoved;
+                } finally {
+                    unsubscribe();
+                }
             },
+
+            providesTags: (result) =>
+                result
+                    ? [
+                        { type: "Product" as const, id: "LIST" },
+                        ...result.map((p) => ({ type: "Product" as const, id: p.id })),
+                    ]
+                    : [{ type: "Product" as const, id: "LIST" }],
         }),
 
-        // Mutations call your Express API, which writes to Firestore
         addProduct: builder.mutation<Product, ProductFormValues>({
             query: (body) => ({
                 url: "/products/create",
                 method: "POST",
                 body,
             }),
+            invalidatesTags: [{ type: "Product", id: "LIST" }],
         }),
 
-        updateProduct: builder.mutation<Product, Product>({
-            query: ({ id, ...rest }) => ({
+        updateProduct: builder.mutation<
+            Product,
+            Partial<Product> & Pick<Product, "id">
+        >({
+            query: ({ id, ...patch }) => ({
                 url: `/products/update/${id}`,
                 method: "PUT",
-                body: rest,
+                body: patch,
             }),
+            invalidatesTags: (result, error, { id }) => [
+                { type: "Product", id },
+                { type: "Product", id: "LIST" },
+            ],
         }),
 
         deleteProduct: builder.mutation<{ id: string }, string>({
@@ -74,8 +96,11 @@ export const productsApi = createApi({
                 url: `/products/delete/${id}`,
                 method: "DELETE",
             }),
+            invalidatesTags: (result, error, id) => [
+                { type: "Product", id },
+                { type: "Product", id: "LIST" },
+            ],
         }),
-
     }),
 });
 
