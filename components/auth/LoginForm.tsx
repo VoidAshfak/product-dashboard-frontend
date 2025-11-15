@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { LoginRequest as LoginRequestValues } from '@/types/userType'
 import { useAppDispatch } from '@/store/redux-hooks'
 import { login } from '@/store/features/auth/authSlice'
-import { useLoginMutation } from "@/store/api";
+import { useLoginMutation } from "@/store/features/auth/authApi";
 import { useRouter } from "next/navigation";
 import {FormSchema} from '@/lib/schema'
 

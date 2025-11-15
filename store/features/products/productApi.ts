@@ -31,10 +31,12 @@ export const productsApi = createApi({
                 _arg,
                 { updateCachedData, cacheEntryRemoved }
             ) {
-                const q = query(collection(firestore, "products"));
+                const q = query(collection(firestore, "dashboard"));
 
                 const unsubscribe = onSnapshot(q, (snapshot) => {
                     updateCachedData((draft) => {
+                        console.log("snapshot size", snapshot.size);
+
                         draft.length = 0;
                         snapshot.forEach((doc) => {
                             draft.push({
