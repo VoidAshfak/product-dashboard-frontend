@@ -3,6 +3,9 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { useGetProductsQuery } from '@/store/features/products/productApi';
 import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { useRouter } from "next/navigation"
+import { useGetMeQuery } from "@/store/features/auth/authApi"
+import { useEffect } from 'react';
 
 const Analytics = () => {
     const {
@@ -11,6 +14,16 @@ const Analytics = () => {
         isError,
         error,
     } = useGetProductsQuery();
+    const router = useRouter();
+    const { data, isLoading: isUserLoading, isError: isUserError, error: userError } = useGetMeQuery();
+
+    useEffect(() => {
+        if (!isUserLoading && isUserError) {
+            if ((userError as any)?.status === 401) {
+                router.push("/login");
+            }
+        }
+    }, [isLoading, isError, error, router]);
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6 p-6 w-full">
