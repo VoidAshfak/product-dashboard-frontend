@@ -19,15 +19,14 @@ export default function Products() {
     } = useGetProductsQuery();
 
     const router = useRouter();
-    const { data, isLoading, isError, error } = useGetMeQuery();
+    const { data, isError, error } = useGetMeQuery();
 
     useEffect(() => {
-        if (!isLoading && isError) {
-            if ((error as any)?.status === 401) {
-                router.push("/login");
-            }
-        }
-    }, [isLoading, isError, error, router]);
+        console.log(data);
+        if (isError === true) {
+            router.push("/login");
+        }    
+    }, [data, isError, error, router]);
 
     return (
         <div className="container mx-auto py-10 px-10">
