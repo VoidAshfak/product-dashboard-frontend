@@ -11,7 +11,7 @@ export const proxy = async (req: NextRequest) => {
 
     if (!isProtected) return NextResponse.next();
 
-    const token = req.cookies.get("accessToken"); // match your backend cookie name
+    const token = req.cookies.get("accessToken");
 
     if (!token) {
         const loginUrl = new URL("/login", req.url);
