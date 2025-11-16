@@ -18,12 +18,10 @@ const Analytics = () => {
     const { data, isLoading: isUserLoading, isError: isUserError, error: userError } = useGetMeQuery();
 
     useEffect(() => {
-        if (!isUserLoading && isUserError) {
-            if ((userError as any)?.status === 401) {
-                router.push("/login");
-            }
+        if (isUserError === true) {
+            router.push("/login");
         }
-    }, [isLoading, isError, error, router]);
+    }, [data, isError, error, router]);
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6 p-6 w-full">
