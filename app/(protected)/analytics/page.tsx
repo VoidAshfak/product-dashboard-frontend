@@ -21,7 +21,7 @@ const Analytics = () => {
         if (isUserError === true) {
             router.push("/login");
         }
-    }, [data, isError, error, router]);
+    }, [data, isUserError, error, router]);
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6 p-6 w-full">
